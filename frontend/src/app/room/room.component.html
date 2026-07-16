@@ -1,0 +1,414 @@
+<!-- <div class="container py-4">
+
+    <h2 class="text-center mb-4">Meeting Room Management</h2>
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Add / Update Meeting Room</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Room Name</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="vchr_name"
+                            [ngModelOptions]="{standalone:true}"
+                            name="vchr_name"
+                            placeholder="Enter Room Name">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Room Size</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            [(ngModel)]="int_size"
+                            [ngModelOptions]="{standalone:true}"
+                            name="int_size"
+                            placeholder="Enter Room Size (Persons)">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Room Purpose</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="vchr_purpose"
+                            [ngModelOptions]="{standalone:true}"
+                            name="vchr_purpose"
+                            placeholder="Enter Room Purpose">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Room Rent</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            [(ngModel)]="int_rent"
+                            [ngModelOptions]="{standalone:true}"
+                            name="int_rent"
+                            placeholder="Enter Room Rent per Day">
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Room Image</label>
+                        <input
+                            type="file"
+                            class="form-control"
+                            (change)="onFileSelected($event)">
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-3">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary px-4"
+                        (click)="saveRecords()">
+                        Save
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-warning px-4"
+                        (click)="UpdateRecords()">
+                        Update
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-success px-4"
+                        (click)="goToBooking()">
+                        Bookings
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow mt-5">
+
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Rooms</h4>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Room Name</th>
+                            <th>Room Size</th>
+                            <th>Purpose</th>
+                            <th>Room Rent</th>
+                            <th>Image</th>
+                            <th width="170">Action</th>
+                            <th>Schedule</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr *ngFor="let roomItem of RoomArray">
+
+                            <td>{{ roomItem.vchr_name }}</td>
+                            <td>{{ roomItem.int_size }}</td>
+                            <td>{{ roomItem.vchr_purpose }}</td>
+                            <td>₹{{ roomItem.int_rent }}</td>
+
+                            <td class="text-center">
+                                <img
+                                    [src]="'http://127.0.0.1:8000' + roomItem.image"
+                                    width="100"
+                                    height="80"
+                                    class="rounded border"
+                                    alt="Room Image">
+                            </td>
+
+                            <td>
+
+                                <button
+                                    class="btn btn-success btn-sm me-2"
+                                    (click)="setUpdate(roomItem)">
+                                    Edit
+                                </button>
+
+                                <button
+                                    class="btn btn-danger btn-sm"
+                                    (click)="setDelete(roomItem)">
+                                    Delete
+                                </button>
+
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-danger btn-sm"
+                                    (click)="goToSchedule(roomItem)">
+                                    Add Schedule
+                                </button>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div> -->
+
+
+<!-- room.component.html -->
+
+<div class="container py-4">
+
+    <h2 class="text-center mb-4">Meeting Room Management</h2>
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Add / Update Meeting Room</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form novalidate>
+
+                <div class="row">
+
+                    <!-- Room Name -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Room Name *</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            [class.is-valid]="isNameValid && vchr_name"
+                            [class.is-invalid]="nameError && vchr_name"
+                            [(ngModel)]="vchr_name"
+                            [ngModelOptions]="{standalone:true}"
+                            name="vchr_name"
+                            placeholder="Enter Room Name"
+                            (input)="validateName()"
+                            (blur)="validateName()">
+                        <div class="error-message" [class.show]="nameError">
+                            <i class="fas fa-exclamation-circle"></i> {{ nameError }}
+                        </div>
+                    </div>
+
+                    <!-- Room Size -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Room Size (Persons) *</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            [class.is-valid]="isSizeValid && int_size"
+                            [class.is-invalid]="sizeError && int_size"
+                            [(ngModel)]="int_size"
+                            [ngModelOptions]="{standalone:true}"
+                            name="int_size"
+                            placeholder="Enter Room Size"
+                            (input)="validateSize()"
+                            (blur)="validateSize()">
+                        <div class="error-message" [class.show]="sizeError">
+                            <i class="fas fa-exclamation-circle"></i> {{ sizeError }}
+                        </div>
+                    </div>
+
+                    <!-- Room Purpose -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Room Purpose *</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            [class.is-valid]="isPurposeValid && vchr_purpose"
+                            [class.is-invalid]="purposeError && vchr_purpose"
+                            [(ngModel)]="vchr_purpose"
+                            [ngModelOptions]="{standalone:true}"
+                            name="vchr_purpose"
+                            placeholder="Enter Room Purpose"
+                            (input)="validatePurpose()"
+                            (blur)="validatePurpose()">
+                        <div class="error-message" [class.show]="purposeError">
+                            <i class="fas fa-exclamation-circle"></i> {{ purposeError }}
+                        </div>
+                    </div>
+
+                    <!-- Room Rent -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Room Rent (per day) *</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            [class.is-valid]="isRentValid && int_rent"
+                            [class.is-invalid]="rentError && int_rent"
+                            [(ngModel)]="int_rent"
+                            [ngModelOptions]="{standalone:true}"
+                            name="int_rent"
+                            placeholder="Enter Room Rent"
+                            (input)="validateRent()"
+                            (blur)="validateRent()">
+                        <div class="error-message" [class.show]="rentError">
+                            <i class="fas fa-exclamation-circle"></i> {{ rentError }}
+                        </div>
+                    </div>
+
+                    <!-- Room Image -->
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Room Image</label>
+                        <input
+                            type="file"
+                            class="form-control"
+                            [class.is-invalid]="imageError"
+                            (change)="onFileSelected($event)"
+                            accept="image/*">
+                        <div class="error-message" [class.show]="imageError">
+                            <i class="fas fa-exclamation-circle"></i> {{ imageError }}
+                        </div>
+                        <small class="text-muted">Allowed formats: JPEG, PNG, GIF, WebP (Max: 5MB)</small>
+                    </div>
+
+                </div>
+
+                <!-- Error Summary -->
+                <div class="alert alert-danger" *ngIf="getErrorCount() > 0" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Please fix {{ getErrorCount() }} error(s) before submitting.
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-3">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary px-4"
+                        (click)="saveRecords()"
+                        [disabled]="!isFormValid()">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-warning px-4"
+                        (click)="UpdateRecords()"
+                        [disabled]="!currentRoomID || !isFormValid()">
+                        <i class="fas fa-edit"></i> Update
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-success px-4"
+                        (click)="goToBooking()">
+                        <i class="fas fa-calendar-check"></i> Bookings
+                    </button>
+
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow mt-5">
+
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Rooms</h4>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Room Name</th>
+                            <th>Room Size</th>
+                            <th>Purpose</th>
+                            <th>Room Rent</th>
+                            <th>Image</th>
+                            <th width="170">Action</th>
+                            <th>Schedule</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr *ngFor="let roomItem of RoomArray">
+
+                            <td><strong>{{ roomItem.vchr_name }}</strong></td>
+                            <td>{{ roomItem.int_size }} persons</td>
+                            <td>{{ roomItem.vchr_purpose }}</td>
+                            <td><strong>₹{{ roomItem.int_rent }}</strong></td>
+
+                            <td class="text-center">
+                                <img
+                                    [src]="'http://127.0.0.1:8000' + roomItem.image"
+                                    width="100"
+                                    height="80"
+                                    class="rounded border"
+                                    alt="Room Image"
+                                    [style.object-fit]="'cover'">
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-success btn-sm me-2"
+                                    (click)="setUpdate(roomItem)">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-primary btn-sm"
+                                    (click)="goToSchedule(roomItem)">
+                                    <i class="fas fa-plus"></i> Add Schedule
+                                </button>
+                            </td>
+
+                        </tr>
+
+                        <!-- Empty State -->
+                        <tr *ngIf="RoomArray.length === 0">
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="fas fa-door-open fa-2x d-block mb-2"></i>
+                                No rooms added yet. Add your first room!
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

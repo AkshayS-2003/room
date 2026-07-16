@@ -1,0 +1,202 @@
+<!-- <div class="container py-4">
+
+    <h2 class="text-center mb-4">Meating Romms</h2>
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Book Meeting Room</h4>
+        </div>
+    </div>
+
+    <div class="card shadow mt-5">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Room Name</th>
+                            <th>Room Size</th>
+                            <th>Purpose</th>
+                            <th>Room Rent</th>
+                            <th>Date</th>
+                            <th>From Time</th>
+                            <th>To Time</th>
+                            <th>Image</th>
+                            <th>Book</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr *ngFor="let ScheduleItem of ScheduleArray">
+
+                            <td>{{ ScheduleItem.fk_ROOM.vchr_name }}</td>
+                            <td>{{ ScheduleItem.fk_ROOM.int_size }}</td>
+                            <td>{{ ScheduleItem.fk_ROOM.vchr_purpose }}</td>
+                            <td>₹{{ ScheduleItem.fk_ROOM.int_rent }}</td>
+                            <td>{{ScheduleItem.date}}</td>
+                            <td>{{ScheduleItem.from_time}}</td>
+                            <td>{{ScheduleItem.to_time}}</td>
+
+                            <td class="text-center">
+                                <img
+                                    [src]="'http://127.0.0.1:8000' + ScheduleItem.fk_ROOM.image"
+                                    width="100"
+                                    height="80"
+                                    class="rounded border"
+                                    alt="Room Image">
+                            </td>
+
+                            <td>
+
+
+                            </td>
+
+                            <td>
+                                <button
+                                    class="btn btn-danger btn-sm"
+                                    (click)="goToBook(ScheduleItem)">
+                                    Book
+                                </button>
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div> -->
+
+
+<!-- avaliable.component.html -->
+
+<div class="container py-4">
+
+    <h2 class="text-center mb-4">Meeting Rooms</h2>
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th><i class="fas fa-door-open me-1"></i> Room Name</th>
+                            <th><i class="fas fa-users me-1"></i> Size</th>
+                            <th><i class="fas fa-tag me-1"></i> Purpose</th>
+                            <th><i class="fas fa-coins me-1"></i> Rent</th>
+                            <th><i class="fas fa-calendar-day me-1"></i> Date</th>
+                            <th><i class="fas fa-clock me-1"></i> From</th>
+                            <th><i class="fas fa-clock me-1"></i> To</th>
+                            <th><i class="fas fa-image me-1"></i> Image</th>
+                            <th><i class="fas fa-status me-1"></i> Status</th>
+                            <th><i class="fas fa-hand-pointer me-1"></i> Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr *ngFor="let ScheduleItem of filteredScheduleArray">
+
+                            <td>
+                                <div class="room-details">
+                                    <span class="room-name">{{ ScheduleItem.fk_ROOM?.vchr_name || 'N/A' }}</span>
+                                    <span class="room-meta">
+                                        <i class="fas fa-building"></i>
+                                        ID: {{ ScheduleItem.fk_ROOM?.id || 'N/A' }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-user me-1"></i>
+                                    {{ ScheduleItem.fk_ROOM?.int_size || 0 }}
+                                </span>
+                            </td>
+                            <td>{{ ScheduleItem.fk_ROOM?.vchr_purpose || 'N/A' }}</td>
+                            <td class="price">₹{{ ScheduleItem.fk_ROOM?.int_rent || 0 }}</td>
+                            
+                            <td>
+                                <span class="badge" 
+                                      [class.bg-success]="isDateToday(ScheduleItem.date)"
+                                      [class.bg-warning]="isFutureDate(ScheduleItem.date)"
+                                      [class.bg-secondary]="isPastDate(ScheduleItem.date)">
+                                    <i class="fas" 
+                                       [class.fa-calendar-check]="isDateToday(ScheduleItem.date)"
+                                       [class.fa-calendar-plus]="isFutureDate(ScheduleItem.date)"
+                                       [class.fa-calendar-times]="isPastDate(ScheduleItem.date)"></i>
+                                    {{ formatDate(ScheduleItem.date) }}
+                                </span>
+                            </td>
+                            
+                            <td>
+                                <span class="badge bg-success">
+                                    <i class="fas fa-play me-1"></i>
+                                    {{ formatTime(ScheduleItem.from_time) }}
+                                </span>
+                            </td>
+                            
+                            <td>
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-stop me-1"></i>
+                                    {{ formatTime(ScheduleItem.to_time) }}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <img
+                                    [src]="'http://127.0.0.1:8000' + ScheduleItem.fk_ROOM?.image"
+                                    width="100"
+                                    height="80"
+                                    class="rounded border"
+                                    alt="Room Image"
+                                    [style.objectFit]="'cover'"
+                                    (error)="ScheduleItem.fk_ROOM.image = '/assets/default-room.jpg'">
+                            </td>
+
+                            <td>{{ScheduleItem.status}}</td>
+
+                            <td>
+    <div class="d-flex flex-column gap-1">
+
+        <button
+            class="btn btn-sm"
+            [ngClass]="ScheduleItem.status === 'Booked' ? 'btn-secondary' : 'btn-danger'"
+            [disabled]="ScheduleItem.status === 'Booked'"
+            (click)="goToBook(ScheduleItem)">
+
+            <i class="fas"
+               [ngClass]="ScheduleItem.status === 'Booked' ? 'fa-lock' : 'fa-calendar-plus'">
+            </i>
+
+            {{ ScheduleItem.status === 'Booked' ? 'Booked' : 'Book' }}
+
+        </button>
+
+    </div>
+</td>
+
+                        </tr>
+
+                        <!-- Empty State -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+    </div>
+
+</div>

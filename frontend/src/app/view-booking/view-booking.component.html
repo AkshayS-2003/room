@@ -1,0 +1,31 @@
+<div class="container py-4">
+    <h2 class="text-center mb-4">Rooms Booking</h2>
+    <div class="card shadow mt-5">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>User Name</th>
+                            <th>Room Name</th>
+                            <th>Purpose</th>
+                            <th>Date</th>
+                            <th>From Time</th>
+                            <th>To Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let BookItem of BookArray">
+                            <td>{{BookItem.fk_USER.vchr_name}}</td>
+                            <td>{{ BookItem.fk_SCHEDULE.fk_ROOM.vchr_name }}</td>
+                            <td>{{ BookItem.vchr_purpose}}</td>
+                            <td>{{ BookItem.fk_SCHEDULE.date | date:'yyyy-MM-dd' }}</td>
+                            <td>{{ BookItem.fk_SCHEDULE.from_time  }}</td>
+                            <td>{{ BookItem.fk_SCHEDULE.to_time  }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

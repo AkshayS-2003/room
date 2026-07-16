@@ -1,0 +1,23 @@
+<div class="container py-4">
+    <h2 class="text-center mb-4">Book Room</h2>
+
+    <div class="card shadow">
+
+        <div class="card-body">
+
+            <form>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Purpose</label>
+                        <input type="text" class="form-control" [(ngModel)] = "vchr_purpose" [ngModelOptions]="{standalone:true}" name="vchr_purpose" placeholder="Purpose of booking">
+
+                    </div>
+
+                    <button type="button" class="btn btn-primary px-4" (click)="saveData()">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

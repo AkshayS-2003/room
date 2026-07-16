@@ -1,0 +1,268 @@
+<!-- <div class="container py-4">
+
+    <h2 class="text-center mb-4">Add Schedules</h2>
+
+    <div class="card-body">
+        <form>
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">From Time</label>
+                    <input type="time" class="form-control" [(ngModel)]="from_time" [ngModelOptions]="{standalone:true}" name="from_time">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">To Time</label>
+                    <input type="time" class="form-control" [(ngModel)]="to_time" [ngModelOptions]="{standalone:true}" name="to_time">
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+                        <label class="form-label">Date</label>
+
+                        <input
+                            type="date"
+                            class="form-control"
+                            [(ngModel)]="date"
+                            [ngModelOptions]="{standalone:true}"
+                            name="date">
+                    </div>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3 mt-3">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary px-4"
+                        (click)="saveSchedules()">
+                        Save
+                    </button>
+                    </div>
+
+
+        </form>
+    </div>
+
+
+    <div class="card shadow mt-5">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Added Schedules</h4>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+
+                        <tr>
+                            <th>Room Name</th>
+                            <th>Date</th>
+                            <th>From Time</th>
+                            <th>To Time</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr *ngFor="let ScheduleItem of ScheduleArray">
+
+                            <td>{{ScheduleItem.fk_ROOM.vchr_name}}</td>
+                            <td>{{ScheduleItem.date | date:'dd-MM-yyyy'}}</td>
+                            <td>{{ScheduleItem.from_time}}</td>
+                            <td>{{ScheduleItem.to_time}}</td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div> -->
+
+
+
+
+<!-- schedule.component.html -->
+
+<div class="container py-4">
+
+    <h2 class="text-center mb-4">Add Schedules</h2>
+
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-calendar-plus"></i> 
+                Add Schedule for 
+                <span class="badge bg-light text-dark ms-2">{{ room_name || 'Room' }}</span>
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            <!-- Room Info Badge -->
+            <div class="room-badge">
+                <i class="fas fa-door-open"></i>
+                Room ID: {{ room_id }}
+            </div>
+
+            <form novalidate>
+
+                <div class="row">
+
+                    <!-- Date Field -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Date <span class="required">*</span></label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            [class.is-valid]="isDateValid && date"
+                            [class.is-invalid]="dateError && date"
+                            [(ngModel)]="date"
+                            [ngModelOptions]="{standalone:true}"
+                            name="date"
+                            [min]="getTodayDate()"
+                            (input)="validateDate()"
+                            (blur)="validateDate()">
+                        <div class="error-message" [class.show]="dateError">
+                            <i class="fas fa-exclamation-circle"></i> {{ dateError }}
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> 
+                            Select today or a future date
+                        </small>
+                    </div>
+
+                    <!-- From Time -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">From Time <span class="required">*</span></label>
+                        <input 
+                            type="time" 
+                            class="form-control"
+                            [class.is-valid]="isFromTimeValid && from_time"
+                            [class.is-invalid]="fromTimeError && from_time"
+                            [(ngModel)]="from_time" 
+                            [ngModelOptions]="{standalone:true}" 
+                            name="from_time"
+                            (input)="validateFromTime()"
+                            (blur)="validateFromTime()">
+                        <div class="error-message" [class.show]="fromTimeError">
+                            <i class="fas fa-exclamation-circle"></i> {{ fromTimeError }}
+                        </div>
+                    </div>
+
+                    <!-- To Time -->
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">To Time <span class="required">*</span></label>
+                        <input 
+                            type="time" 
+                            class="form-control"
+                            [class.is-valid]="isToTimeValid && to_time"
+                            [class.is-invalid]="toTimeError && to_time"
+                            [(ngModel)]="to_time" 
+                            [ngModelOptions]="{standalone:true}" 
+                            name="to_time"
+                            (input)="validateToTime()"
+                            (blur)="validateToTime()">
+                        <div class="error-message" [class.show]="toTimeError">
+                            <i class="fas fa-exclamation-circle"></i> {{ toTimeError }}
+                        </div>
+                    </div>
+
+                    <!-- Time Range Validation -->
+                    <div class="col-12 mb-3" *ngIf="from_time && to_time">
+                        <div class="alert" [class.alert-danger]="timeRangeError" [class.alert-success]="!timeRangeError && isTimeRangeValid">
+                            <i class="fas" 
+                               [class.fa-check-circle]="!timeRangeError && isTimeRangeValid"
+                               [class.fa-exclamation-triangle]="timeRangeError"></i>
+                            {{ timeRangeError || 'Time range is valid ✓' }}
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Error Summary -->
+                <div class="alert alert-danger" *ngIf="getErrorCount() > 0" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Please fix {{ getErrorCount() }} error(s) before submitting.
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mt-3">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary px-4"
+                        (click)="saveSchedules()"
+                        [disabled]="!isFormValid()">
+                        <i class="fas fa-save"></i> Save Schedule
+                    </button>
+
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Schedules List -->
+    <div class="card shadow mt-5">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">
+                <i class="fas fa-list"></i> 
+                Added Schedules
+                <span class="badge bg-light text-dark ms-2">{{ ScheduleArray.length }}</span>
+            </h4>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th><i class="fas fa-door-open me-1"></i> Room Name</th>
+                            <th><i class="fas fa-calendar-day me-1"></i> Date</th>
+                            <th><i class="fas fa-clock me-1"></i> From Time</th>
+                            <th><i class="fas fa-clock me-1"></i> To Time</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr *ngFor="let ScheduleItem of ScheduleArray">
+
+                            <td><strong>{{ ScheduleItem.fk_ROOM?.vchr_name || ScheduleItem.room_name || 'N/A' }}</strong></td>
+                            <td>
+                                <span class="badge bg-primary">
+                                    {{ ScheduleItem.date | date:'dd-MM-yyyy' }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    {{ ScheduleItem.from_time }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-danger">
+                                    {{ ScheduleItem.to_time }}
+                                </span>
+                            </td>
+
+                        </tr>
+
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
